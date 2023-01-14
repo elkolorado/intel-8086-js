@@ -134,6 +134,10 @@
       outline:none;
   }
   
+  .btn-dark {
+    background-color: #323539;
+    color: #adb5bd;
+  }
   .terminal {
       height: 500px;
       resize: none;
