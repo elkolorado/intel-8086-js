@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Symulator rozkazów MOV, XCHG, PUSH i POP</title>
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+    <style>
+        :root {
+  --primary: #13d67b;
+}
+.inputBox {
+    display: block;
+}
+
+
+.btn-success {
+    background-color: var(--primary);
+    color: black;
+}
+.input {
+    width: 100%;
+
+}
+
+.table {
+    width: 200px;
+}
+
+.w2ui-grid-columns {
+    display: none;
+}
+
+.w2ui-grid-box {
+    margin-left: 5px;
+
+}
+.w2ui-reset table tr th, .w2ui-reset table tr td {
+    font-size: 16px !important;
+}
+.w2ui-grid {
+    border: 0 !important;
+}
+.w2ui-grid-body {
+    background: none !important;
+}
+.w2ui-grid-fcolumns {
+    display: none;
+}
+.console {
+    padding: 0.5em;
+    display: block;
+}
+.console * {
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+}
+.w2ui-grid-records > table {
+    --bs-table-color: #fff;
+    --bs-table-bg: #212529;
+    --bs-table-border-color: #373b3e;
+    --bs-table-striped-bg: #2c3034;
+    --bs-table-striped-color: #fff;
+    --bs-table-active-bg: #373b3e;
+    --bs-table-active-color: #fff;
+    --bs-table-hover-bg: #323539;
+    --bs-table-hover-color: #fff;
+    color: var(--bs-table-color);
+    border-color: var(--bs-table-border-color);
+    border: 0 !important;
+}
+
+.w2ui-record {
+    border: 0 !important;
+}
+.w2ui-grid-data {
+    border-color: inherit;
+    border-style: solid;
+    border-width: 0;
+    border: 0 !important;
+    padding: 0.5rem 0.5rem;
+    background-color: var(--bs-table-bg);
+    border-bottom-width: 1px !important;
+    box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+}
+
+
+#grid_grid_records {
+    right: unset !important;
+}
+#grid_grid_records::-webkit-scrollbar-track, #terminal::-webkit-scrollbar-track
+{
+
+  background-color: #373b3e;
+}
+
+#grid_grid_records::-webkit-scrollbar, #terminal::-webkit-scrollbar
+{ 
+  width: 10px;
+  background-color: #373b3e;
+}
+
+#grid_grid_records::-webkit-scrollbar-thumb, #terminal::-webkit-scrollbar-thumb
+{ 
+  background-color: var(--primary);  
+}
+
+
+#terminal, #lineCounter {
+    margin: 0;
+    padding: 5px 0;
+    line-height: 1.5;
+    height: 500px;
+    border-radius: 0;
+    resize: none;
+    font-size: 14px;
+
+}
+#terminal {
+    padding-left: calc(2.5rem + 5px);
+    width:100%;
+    /* Determine appearance of code editor */
+    border-color: var(--primary);
+    color:#ffffff;
+}
+#lineCounter {
+    cursor: unset;
+    display: flex;
+    border-color: transparent;
+    overflow-y: hidden;
+    text-align: right;
+    box-shadow: none;
+    position: absolute;
+    width: 2.5rem;
+    background-color: transparent;
+    /* border-color: var(--primary);     */
+    color: #13d67b
+}
+#lineCounter:focus-visible,
+#terminal:focus-visible {
+    outline:none;
+}
+
+.terminal {
+    height: 500px;
+    resize: none;
+    border-color: var(--primary);
+    padding: 10px 0;
+}
+    </style>
+</head>
+
+<body>
+
+    <!-- formularz do wprowadzania wartości zmiennych -->
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <div class="d-flex w-100">
+                <a class="navbar-brand" href="#">Intel 8086 Simulator</a>
+                <div class="ms-auto">
+                    <a href="https://github.com/elkolorado/intel-8086-js" target="_blank" type="button" class="btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-github"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z">
+                            </path>
+                        </svg>
+                    </a>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+
+
+        <div class="row mt-5">
+            <div class="col">
+                <div class="inputBox  mx-auto">
+                    <p class="mb-1">
+                        <textarea id='lineCounter' wrap='off' readonly>1.</textarea>
+                        <textarea spellcheck="false" wrap='off' class="mt-3 form-control terminal rounded-0" id="terminal">mov ax, 0x0002
+mov cx, 0x01
+mov bh, 0x80
+mov bl, bh
+mov dx, 0x7d4f
+mov bp, bx
+mov di, cx
+mov si, ax
+xchg ax, bx
+xchg bp, di
+mov [bp], bl
+mov [bp+0x0005], bx
+mov [bp], dx
+mov al, [bp]
+mov [si+0x0008], dx
+mov [bp+si+0x0012], ax
+mov bx, [bp]
+mov al, 0x50
+xchg ax, [bp]
+xchg [bp+0x0001], ax
+mov sp, 0x00
+push ax
+push bx
+push cx
+push dx
+pop cx
+push cx
+pop ax</textarea>
+                    </p>
+                    <div class="btn-group ms-auto mt-1">
+                        <button class="btn btn-success rounded-0" onclick="parseTerminal()">Kompiluj & uruchom</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="me-5">
+                        <div class="registers">
+                            <table class="table table-dark mt-0 pt-0">
+                                <thead>
+                                    <tr>
+                                        <th>Rejestry</th>
+                                        <th>H</th>
+                                        <th>L</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>A</td>
+                                        <td id="ah">00</td>
+                                        <td id="al">00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>B</td>
+                                        <td id="bh">00</td>
+                                        <td id="bl">00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>C</td>
+                                        <td id="ch">00</td>
+                                        <td id="cl">00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>D</td>
+                                        <td id="dh">00</td>
+                                        <td id="dl">00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="pointers">
+                            <table class="table table-dark">
+                                <thead>
+                                    <tr>
+                                        <th>Wskaźniki</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>BP</td>
+                                        <td id="bp">0000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>DI</td>
+                                        <td id="di">0000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>SI</td>
+                                        <td id="si">0000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>SP</td>
+                                        <td id="sp">0000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="d-flex">
+                    <div style="margin-right: 20px;">
+                        <table class="table table-dark mb-0 pb-0">
+                            <thead>
+                                <tr>
+                                    <th>Pamięć</th>
+                                    <th>Adres</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <div id="mem" style="width: 230px; height: 250px;"></div>
+                    </div>
+                    <div>
+                        <table class="table table-dark mb-0 pb-0">
+                            <thead>
+                                <tr>
+                                    <th>Konsola</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <div class="console">
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+
+
+
+    </div>
+
+    <form class="d-none">
+        AX: <input type="text" id="ax"><br>
+        BX: <input type="text" id="bx"><br>
+        CX: <input type="text" id="cx"><br>
+        DX: <input type="text" id="dx"><br>
+        BP: <input type="text" id="bp"><br>
+        DI: <input type="text" id="di"><br>
+        SI: <input type="text" id="si"><br>
+        offset: <input type="text" id="offset"><br>
+        <input type="button" value="Symuluj" onclick="simulate()">
+    </form>
+
+    <!-- div do wyświetlania wyniku -->
+    <div id="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+
+           <script>
+      			var codeEditor = document.getElementById('terminal');
+			var lineCounter = document.getElementById('lineCounter');
+			
+			var lineCountCache = 0;
+			function line_counter() {
+		        var lineCount = codeEditor.value.split('\n').length;
+		        var outarr = new Array();
+		        if (lineCountCache != lineCount) {
+		            for (var x = 0; x < lineCount; x++) {
+		                outarr[x] = (x + 1) + '.';
+		            }
+		            lineCounter.value = outarr.join('\n');
+		        }
+		        lineCountCache = lineCount;
+			}
+
+			codeEditor.addEventListener('scroll', () => {
+				lineCounter.scrollTop = codeEditor.scrollTop;
+			    lineCounter.scrollLeft = codeEditor.scrollLeft;
+			});
+
+			codeEditor.addEventListener('input', () => {
+				line_counter();
+			});
+
+		
+
+		  	line_counter();
+    </script>
+    <!-- skrypt JavaScript do symulacji rozkazów -->
+    <script>
+        
+        const log = console.log.bind(console)
+        console.log = (...args) => {
+            log(...args)
+            $('.console').append(`<p>${args}</p>`)
+        }
+
+        const loge = console.error.bind(console)
+        console.error = (...args) => {
+            loge(...args)
+            $('.console').append(`<p class="text-danger">${args} on line ${_l+1}</p>`)
+
+        }
+
+
+        let stack = {
+            ax: "0000",
+            bx: "0000",
+            cx: "0000",
+            dx: "0000",
+            ah: "00",
+            al: "00",
+            bh: "00",
+            bl: "00",
+            ch: "00",
+            cl: "00",
+            dh: "00",
+            dl: "00",
+            bp: "0000",
+            di: "0000",
+            si: "0000",
+            tx: "0000",
+            tl: "00",
+            th: "00",
+            sp: "0000"
+        }
+
+        function clearBios() {
+            let entry = {
+                ax: "0000",
+                bx: "0000",
+                cx: "0000",
+                dx: "0000",
+                ah: "00",
+                al: "00",
+                bh: "00",
+                bl: "00",
+                ch: "00",
+                cl: "00",
+                dh: "00",
+                dl: "00",
+                bp: "0000",
+                di: "0000",
+                si: "0000"
+            }
+            $('.console').html('')
+            Object.keys(Object.fromEntries(Object.entries(entry).filter(([key]) => !key.includes('x')))).forEach(key => {
+                document.getElementById(key).innerHTML = entry[key];
+            });
+        }
+
+        // deklaracja zmiennych dla pamięci operacyjnej
+        let memory = new Array(65536 * 2).fill('00');
+        dumpMemory(memory)
+        // deklaracja zmiennej dla stosu
+        let sp = 65535;
+
+
+
+        function getValue(name) {
+            return document.getElementById(name?.toLowerCase()).value;
+        }
+
+        function setValue(name, set) {
+            name = name?.toLowerCase();
+
+            if (/^0x[0-9A-Fa-f]{0,4}$/.test(set)) {
+                set = set.replace("0x", "")
+                if (/^(ax|bx|cx|dx|tx)$/i.test(name)) {
+                    stack[name] = set.padStart(4, 0);
+                    stack[name.slice(0, -1) + 'h'] = set.padStart(4, 0).substring(0, 2).padStart(2, 0);
+                    stack[name.slice(0, -1) + 'l'] = set.padStart(4, 0).slice(-2).padStart(2, 0);
+
+                } else if (/^[0-9A-Fa-f]{0,4}$/.test(set)) {
+                    if (/^(bp|di|si|sp)$/i.test(name)) {
+                        stack[name] = set.padStart(4, 0);
+                    }
+                    if (/^(ah|al|bh|bl|ch|cl|dh|dl|tl|th)$/i.test(name) && /^[0-9A-Fa-f]{0,2}$/.test(set)) {
+                        stack[name] = set;
+                        stack[name.slice(0, -1) + 'x'] = stack[name.slice(0, -1) + 'h'] + stack[name.slice(0, -1) + 'l'];
+                    }
+                } else {
+                    console.error("compilation error")
+                }
+
+            }
+            else if (/^(ax|bx|cx|dx|bp|di|si|sp|tx)$/i.test(name) && /^(ax|bx|cx|dx|bp|di|si|sp|tx)$/i.test(set)) {
+                set = set?.toLowerCase();
+                if (/^(ax|bx|cx|dx|tx)$/i.test(name)) {
+                    stack[name] = stack[set];
+                    stack[name.slice(0, -1) + 'h'] = stack[set].substring(0, 2).padStart(2, 0);
+                    stack[name.slice(0, -1) + 'l'] = stack[set].slice(-2).padStart(2, 0);
+                } else {
+                    stack[name] = stack[set];
+                }
+            }
+            else if (/^(ah|al|bh|bl|ch|cl|dh|dl|tl|th)$/i.test(name) && /^(ah|al|bh|bl|ch|cl|dh|dl|tl|th)$/i.test(set)) {
+                set = set?.toLowerCase();
+                stack[name] = stack[set];
+                stack[name.slice(0, -1) + 'x'] = stack[name.slice(0, -1) + 'h'] + stack[name.slice(0, -1) + 'l'];
+            }
+
+            else {
+                console.error("compilation error");
+            }
+
+            run();
+        }
+
+        function run() {
+            Object.keys(Object.fromEntries(Object.entries(stack).filter(([key]) => !key.includes('x')))).filter(([key]) => !key.includes('t')).forEach(key => {
+                document.getElementById(key).innerHTML = stack[key];
+            });
+        }
+        let _l;
+        function parseTerminal() {
+            _l = 0;
+            const start = Date.now();
+
+            clearBios();
+
+            let terminal = getValue("terminal");
+            let stack = terminal?.split("\n").map(i => i.trim());
+
+            stack.forEach((command, line) => {
+                tryCommand(command)
+                _l++
+                
+            })
+            $('#mem').html('')
+            const end = Date.now();
+            console.log(`Compile & run execution: ${end - start} ms`);
+            dumpMemory(memory)
+            const dump = Date.now();
+            console.log(`Memory dump execution: ${dump - start} ms`);
+
+        }
+
+        function tryCommand(command) {
+            if (/^mov /i.test(command)) {
+                mov(command)
+            }
+
+            else if (/^xchg /i.test(command)) {
+                xchg(command)
+            }
+
+            else if (/^pop /i.test(command)) {
+                pop(command)
+            }
+
+            else if (/^push /i.test(command)) {
+                push(command)
+            }
+
+            else if (command.length == 0) {
+
+            }
+            else {
+                console.error("compilation error")
+            }
+
+        }
+
+        function testWord(values, i) {
+            return /^(ax|bx|cx|dx|bp|di|si|sp|ah|al|bh|bl|ch|cl|dh|dl|tx|th|tl)$/i.test(values[i])
+        }
+
+        function testHex(value) {
+            return /^0x[0-9a-fA-F]{0,4}$/.test(value)
+        }
+
+        function testBazowe(value) {
+            return /^\[|\]$/.test(value)
+        }
+
+        // function testHex(h) {
+        //     var hex = h.toString(16);
+        //     return hex.match(/^[0-9a-fA-F]+$/) && !isNaN(parseInt(hex, 16));
+        // }
+
+        function setBaseMemory(adress, register) {
+            adress = adress.replace(/\[|]/gi, "")?.toLowerCase();
+            _adress = adress
+            index = 0;
+            let displacement = 0;
+            let obj = []
+            //base
+            if (/^(bp|bx|sp)\+0x[0-9a-fA-F]{0,4}$/.test(adress)) {
+                displacement = parseInt(adress?.split("+").pop().replace("0x", ""), 16)
+                adress = adress?.split("+")[0]
+            }
+
+            //index
+            if (/^(si|di)\+0x[0-9a-fA-F]{0,4}$/.test(adress)) {
+
+                displacement = parseInt(adress?.split("+").pop().replace("0x", ""), 16)
+                adress = adress?.split("+")[0]
+            }
+
+            //base-index
+            if (/^(bp|bx)\+(si|di)\+0x[0-9a-fA-F]{0,4}$/.test(adress)) {
+                if (adress?.split("+").length == 3) {
+                    displacement = parseInt(adress?.split("+").pop().replace("0x", ""), 16)
+                }
+                index = adress?.split("+")[1]
+                adress = adress?.split("+")[0]
+            }
+
+            if (/^(bp|bx|sp)$/i.test(adress)
+                || /^(si|di)$/i.test(adress)
+                || /^(bp|bx)\+(si|di)$/i.test(_adress)
+                || /^(bp|bx)\+(si|di)\+0x[0-9a-fA-F]{0,4}$/.test(_adress)
+                || /^(bp|bx)\+0x[0-9a-fA-F]{0,4}$/.test(_adress)
+                || /^(si|di)\+0x[0-9a-fA-F]{0,4}$/.test(_adress)) {
+                if (/^(ax|bx|cx|dx|tx)$/i.test(register)) {
+                    obj.push(parseInt(stack[adress], 16) + displacement + (parseInt(stack[index], 16) || 0), register.slice(0, -1) + 'l', parseInt(stack[adress], 16) + 1 + displacement + (parseInt(stack[index], 16) || 0), register.slice(0, -1) + 'h')
+                    memory[obj[0]] = stack[obj[1]]
+                    memory[obj[2]] = stack[obj[3]]
+                }
+                else if (/^(ah|al|bh|bl|ch|cl|dh|dl|tl|th)$/i.test(register)) {
+                    obj.push(parseInt(stack[adress], 16) + displacement + (parseInt(stack[index], 16) || 0), register)
+                    memory[obj[0]] = stack[obj[1]]
+                }
+                else {
+                    console.error("compilation error");
+                }
+            }
+            return obj
+        }
+
+        function readBaseMemory(register, adress, instant = true) {
+            adress = adress.replace(/\[|]/gi, "")?.toLowerCase();
+            _adress = adress
+            index = 0;
+            let displacement = 0;
+            let obj = []
+            //base
+            if (/^(bp|bx|sp)\+0x[0-9a-fA-F]{0,4}$/.test(adress)) {
+                displacement = parseInt(adress?.split("+").pop().replace("0x", ""), 16)
+                adress = adress?.split("+")[0]
+            }
+
+            //index
+            if (/^(si|di)\+0x[0-9a-fA-F]{0,4}$/.test(adress)) {
+
+                displacement = parseInt(adress?.split("+").pop().replace("0x", ""), 16)
+                adress = adress?.split("+")[0]
+            }
+
+            //base-index
+            if (/^(bp|bx)\+(si|di)\+0x[0-9a-fA-F]{0,4}$/.test(adress)) {
+                if (adress?.split("+").length == 3) {
+                    displacement = parseInt(adress?.split("+").pop().replace("0x", ""), 16)
+                }
+                index = adress?.split("+")[1]
+                adress = adress?.split("+")[0]
+            }
+
+            if (/^(bp|bx|sp)$/i.test(adress)
+                || /^(si|di)$/i.test(adress)
+                || /^(bp|bx)\+(si|di)$/i.test(_adress)
+                || /^(bp|bx)\+(si|di)\+0x[0-9a-fA-F]{0,4}$/.test(_adress)
+                || /^(bp|bx)\+0x[0-9a-fA-F]{0,4}$/.test(_adress)
+                || /^(si|di)\+0x[0-9a-fA-F]{0,4}$/.test(_adress)) {
+                if (/^(ax|bx|cx|dx|tx)$/i.test(register)) {
+                    obj.push(
+                        parseInt(stack[adress], 16) + displacement + (parseInt(stack[index], 16) || 0),
+
+                        register.slice(0, -1) + 'l',
+
+                        parseInt(stack[adress], 16) + 1 + displacement + (parseInt(stack[index], 16) || 0),
+
+                        register.slice(0, -1) + 'h',
+
+                        register,
+
+                        memory[parseInt(stack[adress], 16) + 1 + displacement + (parseInt(stack[index], 16) || 0)] + memory[parseInt(stack[adress], 16) + displacement + (parseInt(stack[index], 16) || 0)])
+                    if (instant) {
+                        stack[obj[1]] = memory[obj[0]] || '00'
+                        stack[obj[3]] = memory[obj[2]] || '00'
+                        stack[obj[4]] = obj[5] || '0000'
+                    }
+
+                    // stack[register.slice(0, -1) + 'l'] = memory[parseInt(stack[adress], 16) + displacement + (parseInt(stack[index], 16) || 0)] || '00'
+                    // stack[register.slice(0, -1) + 'h'] = memory[parseInt(stack[adress], 16) + 1 + displacement + (parseInt(stack[index], 16) || 0)] || '00'
+
+                    // stack[register] =  || '0000'
+                }
+                else if (/^(ah|al|bh|bl|ch|cl|dh|dl|tl|th)$/i.test(register)) {
+                    obj.push(parseInt(stack[adress], 16) + displacement + (parseInt(stack[index], 16) || 0), register)
+
+                    if (instant) {
+                        stack[obj[1]] = memory[obj[0]] || '00'
+                        stack[obj[1].slice(0, -1) + 'x'] = stack[obj[1].slice(0, -1) + 'h'] + stack[obj[1].slice(0, -1) + 'l'];
+
+                    }
+                    // stack[register] = memory[parseInt(stack[adress], 16) + displacement + (parseInt(stack[index], 16) || 0)] || '0000'
+                    // stack[register] = memory[parseInt(stack[adress], 16) + 1 + displacement] + memory[parseInt(stack[adress], 16) + displacement]
+                }
+                else {
+                    console.error("compilation error");
+                }
+            }
+            run()
+            return obj
+        }
+
+        function pop(command) {
+            command = command.replace(/^pop /i, "");
+            mov('mov ' + 'sp' + ',' + '0x' + (parseInt(stack['sp'], 16) - 1).toString(16))
+            mov('mov ' + command + ',' + '[sp]')
+            mov('mov ' + 'sp' + ',' + '0x' + (parseInt(stack['sp'], 16) - 1).toString(16))
+        }
+
+        function push(command) {
+            command = command.replace(/^push /i, "");
+            mov('mov ' + '[sp+0x01]' + ',' + command)
+            mov('mov ' + 'sp' + ',' + '0x' + (parseInt(stack['sp'], 16) + 2).toString(16))
+        }
+
+
+        function xchg(command) {
+            command = command.replace(/^xchg /i, "");
+            let values = command?.split(",").map(i => i.trim());
+            if (values?.includes("")) {
+                console.error("compilation error");
+            } else {
+                if ((/^(ax|bx|cx|dx|bp|di|si|sp|tx)$/i.test(values[0]) && /^(ax|bx|cx|dx|bp|di|si|sp|tx)$/i.test(values[1]))
+                    || (/^(ah|al|bh|bl|ch|cl|dh|dl|tl|th)$/i.test(values[0]) && /^(ah|al|bh|bl|ch|cl|dh|dl|tl|th)$/i.test(values[1]))) {
+                    let temp = stack[values[0]]
+                    stack[values[0]] = stack[values[1]]
+                    stack[values[1]] = temp
+                    values.forEach(value => {
+                        if (/^(ax|bx|cx|dx|tx)$/i.test(value)) {
+                            stack[value.slice(0, -1) + 'h'] = stack[value].substring(0, 2).padStart(2, 0);
+                            stack[value.slice(0, -1) + 'l'] = stack[value].slice(-2).padStart(2, 0);
+
+                        }
+                    })
+                } else if ((/^(ax|bx|cx|dx|bp|di|si|sp|tx)$/i.test(values[0]) && testBazowe(values[1]))
+                    || (/^(ah|al|bh|bl|ch|cl|dh|dl|tl|th)$/i.test(values[0]) && testBazowe(values[1]))
+                    || (/^(ax|bx|cx|dx|bp|di|si|sp|tx)$/i.test(values[1]) && testBazowe(values[0]))
+                    || (/^(ah|al|bh|bl|ch|cl|dh|dl|tl|th)$/i.test(values[1]) && testBazowe(values[0]))
+                ) {
+                    if (testBazowe(values[1]) || testBazowe(values[0])) {
+                        let b = testBazowe(values[1])
+                        let a = testBazowe(values[0])
+                        let obj
+                        if (b) {
+                            mov('mov ' + 'tx' + ',' + values[1])
+                            mov('mov ' + values[1] + ',' + values[0])
+                            xchg('xchg ' + values[0] + ',' + 'tx')
+                        }
+                        if (a) {
+                            mov('mov ' + 'tx' + ',' + values[0])
+                            mov('mov ' + values[0] + ',' + values[1])
+                            xchg('xchg ' + values[1] + ',' + 'tx')
+
+                        }
+
+
+
+                    }
+                }
+                else {
+                    console.error("compilation error");
+
+                }
+
+                run()
+            }
+        }
+
+
+        parseTerminal();
+
+
+        function dumpMemory(memory) {
+            $().w2destroy('grid');
+            $('#mem').w2grid({
+                name: 'grid',
+                columns: [
+                    { field: 'mem' },
+                    { field: 'address' },
+
+                ],
+            });
+
+
+            generate(memory.length);
+
+
+            function generate(num) {
+                w2ui.grid.records = [];
+                for (var i = 0; i < memory.length / 2; i++) {
+                    w2ui['grid'].records.push({
+                        mem: memory[i],
+                        address: i.toString(16).padStart(4, 0)
+                        // mem: memory.slice(i, i + 16).map((a, ix) => `<span id=${ix}>${a}</span>`).join(" ")
+                    });
+                }
+                w2ui.grid.buffered = w2ui.grid.records.length;
+                w2ui.grid.total = w2ui.grid.buffered
+                w2ui.grid.refresh();
+            }
+
+
+
+            // let table = document.getElementById("memory");
+            // for (var i = 0; i < memory.length - 16; i += 16) {
+            //     var row = table.insertRow();
+            //     var cell = row.insertCell();
+            //     cell.innerHTML = memory.slice(i, i + 16).map((a, ix) => `<span id=${ix}>${a}</span>`).join(" ");
+            //     var cell = row.insertCell();
+            //     cell.innerHTML = `${i.toString(16).padStart(4, 0)}:${(i + 16).toString(16).padStart(4, 0)}`;
+            // }
+
+        }
+
+
+        function mov(command) {
+
+            command = command.replace(/^mov /i, "");
+            let values = command?.split(",").map(i => i.trim());
+
+            if (values?.includes("")) {
+                console.error("compilation error");
+            } else {
+                //mov ax, ...
+                if (testWord(values, 0)) {
+                    // mov ax,bx
+                    if (testWord(values, 1)) {
+                        setValue(values[0], values[1])
+                    }
+
+                    // mov ax, 74dF
+                    else if (testHex(values[1])) {
+                        setValue(values[0], values[1])
+                    }
+
+                    else if (testBazowe(values[1])) {
+                        let obj = readBaseMemory(values[0], values[1])
+
+                    }
+
+                    else {
+                        console.error("compilation error");
+
+                    }
+
+                } else if (testBazowe(values[0])) {
+                    let obj = setBaseMemory(values[0], values[1])
+
+                }
+                else {
+                    console.error("compilation error");
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>
