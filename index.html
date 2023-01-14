@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Intel 8086 Emulator in JS</title>
+    <title>Intel 8086 simulator in JS</title>
     <link rel="stylesheet" type="text/css" href="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
     <script type="text/javascript" src="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.js"></script>
@@ -12,7 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -29,6 +29,7 @@
         <div class="container-fluid">
             <div class="d-flex w-100">
                 <a class="navbar-brand" href="#">Intel 8086 Simulator</a>
+
                 <div class="ms-auto">
                     <a href="https://github.com/elkolorado/intel-8086-js" target="_blank" type="button" class="btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-github"
@@ -84,7 +85,8 @@ push cx
 pop ax</textarea>
                     </p>
                     <div class="btn-group ms-auto mt-1">
-                        <button class="btn btn-success rounded-0" onclick="parseTerminal()">Kompiluj & uruchom</button>
+                        <button class="btn btn-success rounded-0 me-2" onclick="parseTerminal()">Compile & run</button>
+                        <a class="btn btn-dark rounded-0" type="button" href="https://github.com/elkolorado/intel-8086-js/blob/main/README.md" target="_blank" btn btn-dark rounded-0">Readme</a>
                     </div>
                 </div>
             </div>
@@ -95,7 +97,7 @@ pop ax</textarea>
                             <table class="table table-dark mt-0 pt-0">
                                 <thead>
                                     <tr>
-                                        <th>Rejestry</th>
+                                        <th>Registers</th>
                                         <th>H</th>
                                         <th>L</th>
                                     </tr>
@@ -131,7 +133,7 @@ pop ax</textarea>
                             <table class="table table-dark">
                                 <thead>
                                     <tr>
-                                        <th>Wskaźniki</th>
+                                        <th>Pointers</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -165,8 +167,8 @@ pop ax</textarea>
                         <table class="table table-dark mb-0 pb-0">
                             <thead>
                                 <tr>
-                                    <th>Pamięć</th>
-                                    <th>Adres</th>
+                                    <th>Memory</th>
+                                    <th>Address</th>
                                 </tr>
                             </thead>
                         </table>
@@ -176,7 +178,7 @@ pop ax</textarea>
                         <table class="table table-dark mb-0 pb-0">
                             <thead>
                                 <tr>
-                                    <th>Konsola</th>
+                                    <th>Console</th>
                                 </tr>
                             </thead>
                         </table>
@@ -216,7 +218,7 @@ pop ax</textarea>
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=1"></script>
 </body>
 
 </html>
