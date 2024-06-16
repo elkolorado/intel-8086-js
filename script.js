@@ -1,12 +1,12 @@
-var codeEditor = document.getElementById('terminal');
-var lineCounter = document.getElementById('lineCounter');
+let codeEditor = document.getElementById('terminal');
+let lineCounter = document.getElementById('lineCounter');
 
-var lineCountCache = 0;
+let lineCountCache = 0;
 function line_counter() {
-    var lineCount = codeEditor.value.split('\n').length;
-    var outarr = new Array();
+    let lineCount = codeEditor.value.split('\n').length;
+    let outarr = new Array();
     if (lineCountCache != lineCount) {
-        for (var x = 0; x < lineCount; x++) {
+        for (let x = 0; x < lineCount; x++) {
             outarr[x] = (x + 1) + '.';
         }
         lineCounter.value = outarr.join('\n');
@@ -214,7 +214,7 @@ function testBazowe(value) {
 }
 
 // function testHex(h) {
-//     var hex = h.toString(16);
+//     let hex = h.toString(16);
 //     return hex.match(/^[0-9a-fA-F]+$/) && !isNaN(parseInt(hex, 16));
 // }
 
@@ -432,7 +432,7 @@ function dumpMemory(memory) {
 
     function generate(num) {
         w2ui.grid.records = [];
-        for (var i = 0; i < memory.length / 2; i++) {
+        for (let i = 0; i < memory.length / 2; i++) {
             w2ui['grid'].records.push({
                 mem: memory[i],
                 address: i.toString(16).padStart(4, 0)
@@ -447,11 +447,11 @@ function dumpMemory(memory) {
 
 
     // let table = document.getElementById("memory");
-    // for (var i = 0; i < memory.length - 16; i += 16) {
-    //     var row = table.insertRow();
-    //     var cell = row.insertCell();
+    // for (let i = 0; i < memory.length - 16; i += 16) {
+    //     let row = table.insertRow();
+    //     let cell = row.insertCell();
     //     cell.innerHTML = memory.slice(i, i + 16).map((a, ix) => `<span id=${ix}>${a}</span>`).join(" ");
-    //     var cell = row.insertCell();
+    //     let cell = row.insertCell();
     //     cell.innerHTML = `${i.toString(16).padStart(4, 0)}:${(i + 16).toString(16).padStart(4, 0)}`;
     // }
 
